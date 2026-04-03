@@ -4,119 +4,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cat Fact Explorer</title>
+    <title>Simon - Heritage Edition</title>
     <style>
-        /* 1. Global Reset & Background */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root {
+            --bg-stone: #e0e5ec;
+            /* Soft, warm off-white/grey */
+            --shadow-dark: #a3b1c6;
+            --shadow-light: #ffffff;
+
+            /* Organic, muted tones instead of neon */
+            --red-matte: #d9534f;
+            --blue-matte: #4a90e2;
+            --green-matte: #5cb85c;
+            --yellow-matte: #f0ad4e;
         }
 
         body {
-            /* A vibrant, modern gradient */
-            background: linear-gradient(135deg, #4eff02 0%, #e306eb 100%);
-            height: 100vh;
+            background-color: var(--bg-stone);
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            overflow: hidden;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Georgia', serif;
+            /* More classic font */
+            color: #444;
         }
 
-        /* 2. The Glass Card Container */
-        .card {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(15px);
-            /* This creates the frosted glass effect */
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            padding: 40px;
-            width: 90%;
-            max-width: 500px;
+        .header {
             text-align: center;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            margin-bottom: 50px;
         }
 
-        /* 3. Typography */
         h1 {
-            color: #ffffff;
-            font-size: 2rem;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            font-size: 2.2rem;
+            letter-spacing: 8px;
+            font-weight: 300;
+            color: #555;
+            margin: 0;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
         }
 
-        #heading {
-            color: #f1f1f1;
-            font-size: 1.2rem;
-            line-height: 1.6;
-            min-height: 80px;
-            /* Prevents the card from jumping size */
-            margin-bottom: 30px;
+        #level-title {
             font-style: italic;
-            /* Smooth transition for when text changes */
-            transition: all 0.5s ease;
+            font-weight: normal;
+            margin-top: 10px;
+            color: #777;
         }
 
-        /* 4. Button Styling */
-        button {
-            background: #ffffff;
-            color: #0415ac;
-            border: none;
-            padding: 15px 35px;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 50px;
+        /* The Physical Board Feel */
+        .game-board {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(2, 170px);
+            grid-template-rows: repeat(2, 170px);
+            gap: 25px;
+            padding: 30px;
+            background: var(--bg-stone);
+            border-radius: 50%;
+            /* Neumorphic Shadow */
+            box-shadow: 20px 20px 60px var(--shadow-dark),
+                -20px -20px 60px var(--shadow-light);
+        }
+
+        .btn {
+            width: 170px;
+            height: 170px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+            position: relative;
+            border: 4px solid transparent;
         }
 
-        button:hover {
-            transform: scale(1.05);
-            background: #fdfdfd;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        /* Soft Matte Colors */
+        .red {
+            background: var(--red-matte);
+            border-radius: 100% 15px 15px 15px;
+            box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.2);
         }
 
-        button:active {
-            transform: scale(0.98);
+        .blue {
+            background: var(--blue-matte);
+            border-radius: 15px 100% 15px 15px;
+            box-shadow: inset -4px 4px 8px rgba(0, 0, 0, 0.2);
         }
 
-        /* 5. Subtle Animation for new facts */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .green {
+            background: var(--green-matte);
+            border-radius: 15px 15px 15px 100%;
+            box-shadow: inset 4px -4px 8px rgba(0, 0, 0, 0.2);
         }
 
-        .new-fact {
-            animation: fadeIn 0.6s ease-out;
+        .yellow {
+            background: var(--yellow-matte);
+            border-radius: 15px 15px 100% 15px;
+            box-shadow: inset -4px -4px 8px rgba(0, 0, 0, 0.2);
         }
+
+        /* Press State: Feels like the button is being pushed in */
+        .pressed {
+            transform: scale(0.95);
+            filter: brightness(1.2) contrast(1.1);
+            box-shadow: inset 10px 10px 20px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        /* Center Hub */
+        .center-hub {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            background: var(--bg-stone);
+            border-radius: 50%;
+            box-shadow: 5px 5px 10px var(--shadow-dark),
+                -5px -5px 10px var(--shadow-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+        }
+
+        #start-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: none;
+            background: var(--bg-stone);
+            box-shadow: 3px 3px 6px var(--shadow-dark),
+                -3px -3px 6px var(--shadow-light);
+            cursor: pointer;
+            font-size: 0.7rem;
+            color: #666;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        #start-btn:active {
+            box-shadow: inset 2px 2px 5px var(--shadow-dark),
+                inset -2px -2px 5px var(--shadow-light);
+        }
+
+        /* Flash of red for Game Over */
+        .game-over {
+            background-color: #f8d7da;
+            transition: background-color 0.1s;
+        }
+
+    
     </style>
 </head>
 
 <body>
 
-    <div class="card">
-
-
-        <h2>🐱 Cat Facts</h2>
-        <h1></h1>
-
-        <button onclick="getcatfact2()">Next Fact</button>
+    <div class="header">
+        <h1>SIMON</h1>
+        <div id="level-title">Level 0</div>
     </div>
 
-    <script src="main.js"></script>
+    <div class="game-board">
+        <div class="btn red" id="red" type="button"></div>
+        <div class="btn blue" id="blue" type="button"></div>
+        <div class="btn green" id="green" type="button"></div>
+        <div class="btn yellow" id="yellow" type="button"></div>
 
+        <div class="center-hub">
+            <button id="start-btn">START</button>
+        </div>
+    </div>
+
+    <script src="101.js"></script>
 </body>
 
 </html>
