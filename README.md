@@ -1,2 +1,2 @@
 # SimanSays
-Memmory puzzle
+Memmory puzzle.
